@@ -48,7 +48,6 @@ contract StreamManager is IStreamManager, ReentrancyGuard {
         uint256 rate;
         uint256 terminationPeriod;
         uint256 cliffPeriod;
-        uint256 createdAt;
         uint256 lastClaimedAt;
         uint256 terminatedAt;
         bool isClaimable;
@@ -80,7 +79,7 @@ contract StreamManager is IStreamManager, ReentrancyGuard {
 
     ///@dev check if the cliff period is ended
     modifier onlyAfterCliffPeriod {
-        if (block.timestamp <= streamInstances[msg.sender].createdAt  + streamInstances[msg.sender].cliffPeriod)
+        if (block.timestamp <= streamInstances[msg.sender].lastClaimedAt)
             revert CliffPeriodIsNotEnded();
         _;
     }
@@ -129,7 +128,6 @@ contract StreamManager is IStreamManager, ReentrancyGuard {
             _rate,
             _terminationPeriod,
             _cliffPeriod,
-            block.timestamp, // created at
             block.timestamp + _cliffPeriod, // lastly claimed at
             0,               // terminated at
             true             // isClaimable
